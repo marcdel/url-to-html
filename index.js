@@ -1,4 +1,5 @@
 var http = require('http');
+var AWS = require('aws-sdk');
 
 exports.handler = function(event, context) {
   var options = {
@@ -12,7 +13,20 @@ exports.handler = function(event, context) {
       data += chunk;
     });
     res.on('end', function () {
-      context.succeed({url: event.host + event.path, data: data, bucket: event.bucket});
+      var params = {
+  			Bucket: event.bucket,
+  			Key: event.fileName,
+        Body: data
+  		};
+
+      var s3 = new AWS.S3();
+      s3.putObject(params, function(err, data) {
+        if (err) {
+          context.fail({error: err})
+        } else {
+          context.succeed(params);
+        }
+      })
     });
   });
 
