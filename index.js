@@ -22,7 +22,7 @@ exports.handler = function(event, context) {
       var s3 = new AWS.S3();
       s3.putObject(params, function(err, data) {
         if (err) {
-          context.fail({error: err})
+          context.fail(err)
         } else {
           context.succeed(params);
         }
@@ -31,7 +31,7 @@ exports.handler = function(event, context) {
   });
 
   req.on('error', function (e) {
-    context.fail({error: e.message})
+    context.fail(e.message)
   });
 
   req.end();
